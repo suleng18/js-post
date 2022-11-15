@@ -1,11 +1,11 @@
 import postApi from './api/postApi';
-import { initPagination, initSearch, renderPostList, renderPagination } from './utils';
+import { initPagination, initSearch, renderPostList, renderPagination, toast } from './utils';
 
 async function handleFileChange(filterName, filterValue) {
   try {
     // update  queryparams
     const url = new URL(window.location);
-    url.searchParams.set(filterName, filterValue);
+    if (filterName) url.searchParams.set(filterName, filterValue);
 
     if (filterName === 'title_like') url.searchParams.set('_page', 1);
     history.pushState({}, '', url);
@@ -20,6 +20,24 @@ async function handleFileChange(filterName, filterValue) {
   }
 }
 
+function registerPostDeleteEvent() {
+  document.addEventListener('post-delete', async (event) => {
+    try {
+      const post = event.detail;
+      const message = `Are you sure you want to delete post "${post.title}"?`;
+      if (window.confirm(message)) {
+        await postApi.remove(post.id);
+        await handleFileChange();
+
+        toast.success('Remove post successfully 🙈');
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  });
+}
+
 // Main
 (async () => {
   try {
@@ -30,8 +48,10 @@ async function handleFileChange(filterName, filterValue) {
     if (!url.searchParams.get('_limit')) url.searchParams.set('_limit', 6);
 
     history.pushState({}, '', url);
-
     const queryParams = url.searchParams;
+
+    registerPostDeleteEvent();
+
     // attach click event for links
     initPagination({
       elementId: 'pagination',

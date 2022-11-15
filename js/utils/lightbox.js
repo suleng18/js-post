@@ -28,14 +28,12 @@ export function registerLightbox({ modalId, imgSelector, prevSelector, nextSelec
 
     imgList = document.querySelectorAll(`img[data-album="${target.dataset.album}"]`);
     currentIndex = [...imgList].findIndex((x) => x === target);
-    console.log({ target, currentIndex, imgList });
     showImageAtIndex(currentIndex);
     showModal(modalElement);
   });
 
   prevButton.addEventListener('click', () => {
     currentIndex = (currentIndex - 1 + imgList.length) % imgList.length;
-    console.log('🚀 ~ currentIndex', currentIndex);
     showImageAtIndex(currentIndex);
   });
   nextButton.addEventListener('click', () => {

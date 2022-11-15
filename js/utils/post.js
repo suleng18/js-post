@@ -30,7 +30,6 @@ export function createPostElement(post) {
 
   // attach event
   const divElement = liElement.firstElementChild;
-  console.log(divElement);
   if (divElement)
     divElement.addEventListener('click', (event) => {
       const menu = liElement.querySelector('[data-id="menu"]');
@@ -43,6 +42,17 @@ export function createPostElement(post) {
     editButton.addEventListener('click', (event) => {
       // event.stopPropagation();
       window.location.assign(`/add-edit-post.html?id=${post.id}`);
+    });
+
+  const removeButton = liElement.querySelector('[data-id="remove"]');
+  if (removeButton)
+    removeButton.addEventListener('click', (event) => {
+      const customEvent = new CustomEvent('post-delete', {
+        bubbles: true,
+        detail: post,
+      });
+
+      removeButton.dispatchEvent(customEvent);
     });
 
   return liElement;
